@@ -3,20 +3,9 @@
   "description" : "Export mineo data traffic history in csv format",
   "version": "1.0",
   "manifest_version": 2,
-  "permissions": [
-    "activeTab"
-  ],
+  "permissions": ["activeTab", "downloads"],
   "browser_action": {
+    "default_popup": "popup.html",
     "default_icon": "extension-icon.png"
-  },
-  "background": {
-    "scripts": ["background.js"],
-    "persistent": false
-  },
-  "content_scripts": [
-    {
-      "matches": ["https://my.mineo.jp/*"],
-      "js": ["jquery-3.4.1.min.js", "contentScript.js"]
-    }
-  ]
+  }
 }

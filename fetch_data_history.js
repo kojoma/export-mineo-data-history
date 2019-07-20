@@ -1,8 +1,6 @@
-var allHistory = {};
-fetchDataHistory();
-console.log(allHistory);
-
 function fetchDataHistory() {
+  var result = [];
+
   let tabBox = $('body').find('#tabbox');
   let tabList = tabBox.find('p').find('a');
   tabBox.find('div').each(function (monthIndex) {
@@ -14,11 +12,9 @@ function fetchDataHistory() {
       return true;
     }
 
-    var historyByMonth = [];
-
     $(this).find('tbody').find('tr').each(function () {
       if (shouldOutput($(this))) {
-        var historyByDay = [];
+        var historyByDay = [formatMonth(monthName)];
 
         // xx日
         historyByDay.push(formatDay($(this).find('th').text()));
@@ -28,12 +24,12 @@ function fetchDataHistory() {
           historyByDay.push(formatData($(this).text()));
         });
 
-        historyByMonth.push(historyByDay);
+        result.push(historyByDay);
       }
     });
-
-    allHistory[formatMonth(monthName)] = historyByMonth;
   });
+
+  return result;
 }
 
 function shouldOutput(trElement) {
@@ -56,3 +52,8 @@ function formatDay(dayString) {
 function formatData(dataString) {
   return dataString.replace('MB', '').replace(',', '').trim();
 }
+
+var allHistory = fetchDataHistory();
+chrome.runtime.sendMessage({
+  data_history: allHistory
+});
