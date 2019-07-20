@@ -1,5 +1,5 @@
 function fetchDataHistory() {
-  var result = {};
+  var result = [];
 
   let tabBox = $('body').find('#tabbox');
   let tabList = tabBox.find('p').find('a');
@@ -12,11 +12,9 @@ function fetchDataHistory() {
       return true;
     }
 
-    var historyByMonth = [];
-
     $(this).find('tbody').find('tr').each(function () {
       if (shouldOutput($(this))) {
-        var historyByDay = [];
+        var historyByDay = [formatMonth(monthName)];
 
         // xx日
         historyByDay.push(formatDay($(this).find('th').text()));
@@ -26,11 +24,9 @@ function fetchDataHistory() {
           historyByDay.push(formatData($(this).text()));
         });
 
-        historyByMonth.push(historyByDay);
+        result.push(historyByDay);
       }
     });
-
-    result[formatMonth(monthName)] = historyByMonth;
   });
 
   return result;
