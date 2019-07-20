@@ -1,10 +1,13 @@
+var canDownload = false;
 var dataHistories = [];
 
 function downloadDataHistory() {
-  chrome.downloads.download({
-    url: csvUrl(),
-    filename: filename()
-  }, function(id) {});
+  if (canDownload) {
+    chrome.downloads.download({
+      url: csvUrl(),
+      filename: filename()
+    }, function(id) {});
+  }
 }
 
 function csvUrl() {
@@ -19,8 +22,28 @@ function filename() {
   return 'mineo-data-history' + now.getTime() + '.csv';
 }
 
+function showReadyDownloadNotice() {
+  document.getElementById('notice').innerText = 'mineo data fetched!';
+}
+
+function showCanNotDownloadNotice() {
+  document.getElementById('notice').innerText = 'mineo data not found!';
+}
+
+function hideDownloadButton() {
+  document.getElementById('download').hidden = true;
+}
+
 chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
-  dataHistories = message.data_history;
+  if (message.data_history.length !== 0) {
+    canDownload = true;
+    dataHistories = message.data_history;
+    showReadyDownloadNotice();
+  } else {
+    canDownload = false;
+    showCanNotDownloadNotice();
+    hideDownloadButton();
+  }
 });
 
 window.onload = function() {
