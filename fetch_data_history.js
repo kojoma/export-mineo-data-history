@@ -1,8 +1,6 @@
-var allHistory = {};
-fetchDataHistory();
-console.log(allHistory);
-
 function fetchDataHistory() {
+  var result = {};
+
   let tabBox = $('body').find('#tabbox');
   let tabList = tabBox.find('p').find('a');
   tabBox.find('div').each(function (monthIndex) {
@@ -32,8 +30,10 @@ function fetchDataHistory() {
       }
     });
 
-    allHistory[formatMonth(monthName)] = historyByMonth;
+    result[formatMonth(monthName)] = historyByMonth;
   });
+
+  return result;
 }
 
 function shouldOutput(trElement) {
@@ -56,3 +56,8 @@ function formatDay(dayString) {
 function formatData(dataString) {
   return dataString.replace('MB', '').replace(',', '').trim();
 }
+
+var allHistory = fetchDataHistory();
+chrome.runtime.sendMessage({
+  data_history: allHistory
+});
