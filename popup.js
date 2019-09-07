@@ -23,11 +23,11 @@ function filename() {
 }
 
 function showReadyDownloadNotice() {
-  document.getElementById('notice').innerText = 'mineo data fetched!';
+  document.getElementById('notice').innerText = 'Ready to download!';
 }
 
 function showCanNotDownloadNotice() {
-  document.getElementById('notice').innerText = 'mineo data not found!';
+  document.getElementById('notice').innerText = 'mineo data not found...';
 }
 
 function hideDownloadButton() {
