@@ -1,19 +1,24 @@
 var canDownload = false;
 var dataHistories = [];
+let headerLine = [['月', '日', 'データ通信量（概算）高速', 'データ通信量（概算）低速', 'パケットギフトOUT', 'パケットギフトIN', 'フリータンク・チップOUT', 'フリータンク・チップIN']];
 
 function downloadDataHistory() {
   if (canDownload) {
+    let shouldInsertHeader = $('body').find('#insert_header').is(":checked");
     chrome.downloads.download({
-      url: csvUrl(),
+      url: csvUrl(shouldInsertHeader),
       filename: filename()
     }, function(id) {});
   }
 }
 
-function csvUrl() {
+function csvUrl(shouldInsertHeader) {
   let bom = new Uint8Array([0xEF, 0xBB, 0xBF]);
-  let csvData = dataHistories.map(function(history){ return history.join(',') }).join('\r\n');
-  let blob = new Blob([bom, csvData], { type: 'text/csv' });
+
+  let outputData = shouldInsertHeader ? headerLine.concat(dataHistories) : dataHistories;
+  let csv = outputData.map(function(history){ return history.join(',') }).join('\r\n');
+
+  let blob = new Blob([bom, csv], { type: 'text/csv' });
   return window.webkitURL.createObjectURL(blob);
 }
 
@@ -22,27 +27,19 @@ function filename() {
   return 'mineo-data-history-' + now.getTime() + '.csv';
 }
 
-function showReadyDownloadNotice() {
-  document.getElementById('notice').innerText = 'Ready to download!';
-}
-
-function showCanNotDownloadNotice() {
-  document.getElementById('notice').innerText = 'mineo data not found...';
-}
-
-function hideDownloadButton() {
-  document.getElementById('download').hidden = true;
-}
-
 chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
   if (message.data_history.length !== 0) {
     canDownload = true;
     dataHistories = message.data_history;
-    showReadyDownloadNotice();
+
+    document.getElementById('notice').innerText = 'Ready to download!';
+    document.getElementById('insert_header').disabled = false;
   } else {
     canDownload = false;
-    showCanNotDownloadNotice();
-    hideDownloadButton();
+
+    document.getElementById('notice').innerText = 'mineo data not found...';
+    document.getElementById('insert_header').disabled = true;
+    document.getElementById('download').hidden = true;
   }
 });
 
