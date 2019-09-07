@@ -1,7 +1,7 @@
 {
   "name": "Export mineo data history",
   "description" : "Export mineo data traffic history in csv format",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "manifest_version": 2,
   "permissions": ["activeTab", "downloads"],
   "browser_action": {
