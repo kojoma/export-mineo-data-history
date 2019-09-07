@@ -19,7 +19,7 @@ function csvUrl() {
 
 function filename() {
   let now = new Date();
-  return 'mineo-data-history' + now.getTime() + '.csv';
+  return 'mineo-data-history-' + now.getTime() + '.csv';
 }
 
 function showReadyDownloadNotice() {
